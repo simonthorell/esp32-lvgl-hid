@@ -72,6 +72,7 @@ This template was created using the following steps:
   - Save  
 
 ## Build & Flash Wih GUI
+- *TODO: Replace this with .devcontainer and GitHub Actions for auto-build!*
 - Move into the UI folder, build & flash using the idf.py tool.
   ```bash 
   cd gui/__ui_project_name__                # Move to GUI folder

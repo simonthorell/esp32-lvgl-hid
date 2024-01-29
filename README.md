@@ -66,7 +66,7 @@ This template was created using the following steps:
   - Paste the folder from your clipboard into this folder as well as the .zip folder you created.
 2. **Create GUI**
   - When you open SquarLine Studio you should now se a tab called **LilyGO** under **Create**.
-  - Once the project is opened, click on **Export -> Create Template Project** and choose the `gui/__ui_project_name__/main/ui` in the project folder.
+  - Once the project is opened, click on **Export -> Create Template Project** and first create a folder called `squareline` in the project folder (included in .gitignore), and when prompted for **Export To** choose the `gui/__ui_project_name__/main/ui` folder in the project folder.
 3. **Export GUI**
   - Export the `.ui` files by clicking **Export -> Export UI Files**.
   - Save  

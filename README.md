@@ -1,4 +1,4 @@
-# _ESP32 LVGL USB HDI_
+# _ESP32 LVGL HDI_
 
 This template provides a starting point for creating a GUI application on the ESP32-S3 microcontroller using the LittlevGL (LVGL) graphics library and the ESP-IDF framework. The template includes configuration for a 1.9" ST7789 LCD Screen and demonstrates the basics of using LVGL with ESP32 as well as connecting Keyboard and Mouse using USB HDI.
 
@@ -6,6 +6,7 @@ This template provides a starting point for creating a GUI application on the ES
 - Install [ESP-IDF](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html)
 - Install [VSCode](https://code.visualstudio.com/)
 - Install [ESP-IDF Extension for VSCode](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension)
+- Install [SquareLine-Studio](https://squareline.io/downloads)
 
 ## Microcontroller
 - ESP32-S3 with 1.9" ST7789 LCD Screen (Example pre-built version: LILYGO T-Display-S3)
@@ -53,7 +54,22 @@ This template was created using the following steps:
       ```bash
       git checkout -b dev
       ```
-    - Once you are ready for next build you make a Pull Request from dev branch on Github and merge it into the main branch. 
+    - Once you are ready for next build you make a Pull Request from dev branch on Github and merge it into the main branch.
+
+## Build GUI using SquareLine Studio
+1. **Add Board**
+  - Compress the `__ui_project_name__` folder inside the `gui` folder in the project directory. 
+    - On macOS you can just: **right click -> Compress Folder**
+    - Rename the folder to `t_display_s3.zip`
+  - Locate the `gui` folder in this repo and copy the `t_display_s3` folder inside the `boards` folder.
+  - In your applications folder (if using macOS), find your SquareLine Studio installation, right click `Show Package Contents` then find the `boards` folder and create a new folder called `LilyGo`.
+  - Paste the folder from your clipboard into this folder as well as the .zip folder you created.
+2. **Create GUI**
+  - When you open SquarLine Studio you should now se a tab called **LilyGO** under **Create**.
+  - Once the project is opened, click on **Export -> Create Template Project** and choose the `gui/__ui_project_name__/main/ui` in the project folder.
+3. **Export GUI**
+  - Export the `.ui` files by clicking **Export -> Export UI Files**.
+  - Save  
 
 ## Build Your Project
 - Press `CMD + Shift + P` and type `ESP-IDF: Build your Project`

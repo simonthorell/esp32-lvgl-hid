@@ -1,0 +1,8 @@
+dependencies:
+  espressif/usb_host_hid: "^1.0.2"
+  esp_lcd_touch_tt21100:
+    version: ^1
+  esp_lvgl_port:
+    version: '>=1.2.0'
+  idf:
+    version: '>=4.4'

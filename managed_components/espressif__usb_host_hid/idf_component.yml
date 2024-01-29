@@ -1,0 +1,10 @@
+dependencies:
+  idf:
+    version: '>=4.4'
+description: USB Host HID driver
+targets:
+- esp32s2
+- esp32s3
+- esp32p4
+url: https://github.com/espressif/esp-usb/tree/master/host/class/hid/usb_host_hid
+version: 1.0.2

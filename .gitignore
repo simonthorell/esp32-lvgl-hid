@@ -1,0 +1,5 @@
+managed_components
+build/
+.DS_Store
+/sdkconfig.old
+gui/

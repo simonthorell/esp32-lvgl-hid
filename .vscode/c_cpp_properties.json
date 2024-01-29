@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "ESP-IDF",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${config:idf.espIdfPath}/components/**"
+            ],
+            "defines": [],
+            "intelliSenseMode": "gcc-arm64",
+            "cStandard": "c11",
+            "cppStandard": "c++23"
+        }
+    ],
+    "version": 4
+}

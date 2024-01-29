@@ -1,3 +1,7 @@
 {
+    "files.associations": {
+        "esp_log.h": "c",
+        "i2c.h": "c"
+    },
     "idf.adapterTargetName": "esp32s3"
 }

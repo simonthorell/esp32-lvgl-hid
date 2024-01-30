@@ -1,0 +1,4 @@
+#ifndef CONNECT_MQTT_H
+#define CONNECT_MQTT_H
+
+#endif // CONNECT_MQTT_H

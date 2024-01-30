@@ -7,6 +7,9 @@
 #include "t_display_s3.h"
 #include "iot_button.h"
 #include "ui/ui.h"
+#include "mqtt_client.h"
+#include "connect_wifi.h"
+#include "connect_mqtt.h"
 
 #define TAG "__UI_PROJECT_NAME__"
 
@@ -260,6 +263,17 @@ void configure_hardware_timer() {
 }
 
 void app_main(void) {
+    // Initialize NVS
+    esp_err_t ret = nvs_flash_init();
+    ESP_LOGI("CH", "%d ret", ret);
+	if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
+	{
+		ESP_ERROR_CHECK(nvs_flash_erase());
+		ret = nvs_flash_init();
+	}
+
+    connect_wifi(); // Connect to wifi
+
     static lv_disp_drv_t disp_drv; // LVGL display driver
     static lv_disp_t *disp_handle; // LVGL display handle
 

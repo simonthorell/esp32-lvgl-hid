@@ -3,6 +3,11 @@ build/
 .DS_Store
 /sdkconfig.old
 
+# Squareline GUI files
+squareline/autosave/
+squareline/backup/
+squareline/cache/
+
 # GUI generated files
 gui/__ui_project_name__/build/
 gui/__ui_project_name__/dependencies.lock

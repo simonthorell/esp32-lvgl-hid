@@ -1265,7 +1265,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "/Users/simonthorell/esp_projects/esp32-lvgl-hid/gui/__ui_project_name__/main/ui",
     "projectExportFolderPath": "/Users/simonthorell/esp_projects/esp32-lvgl-hid/squareline/SquareLine_GUI",
-    "backup_cnt": 8,
+    "backup_cnt": 9,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": null,

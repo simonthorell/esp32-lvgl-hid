@@ -4,6 +4,7 @@
 #include <math.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "lvgl.h"
 
 #include "t_display_s3.h"
 #include "iot_button.h"
@@ -86,23 +87,12 @@ static void setup_buttons() {
     }
 }
 
-
 static void update_hw_info_timer_cb(void *arg) {
     if (btn_1_pressed) {
-        if (screen_brightness_step < 16) {
-            screen_brightness_step++;
-        }
-        if (screen_brightness_step > 16) {
-            screen_brightness_step = 16;
-        }
+        lv_textarea_add_text(ui_EnterEmailField, "email@simon.com");
     }
     if (btn_2_pressed) {
-        if (screen_brightness_step > 0) {
-            screen_brightness_step--;
-        }
-        if (screen_brightness_step < 0) {
-            screen_brightness_step = 0;
-        }
+        lv_textarea_add_text(ui_EnterPasswordField, "test_password123");
     }
 
     if (last_screen_brightness_step != screen_brightness_step) {

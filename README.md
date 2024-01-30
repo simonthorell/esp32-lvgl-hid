@@ -78,7 +78,7 @@ This template was created using the following steps:
   cd gui/__ui_project_name__                # Move to GUI folder
   get_idf                                   # Get ESP-IDF tools
   idf.py build                              # Build to project with GUI
-  idf.py -p /dev/cu.usbmodem1101 monitor    # Flash and monitor (replace with your USB-port)
+  idf.py -p /dev/cu.usbmodem1101 flash       # Flash and monitor (replace with your USB-port)
   ```
 
 ## Build Your Project Without GUI [Optional]

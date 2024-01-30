@@ -2,3 +2,7 @@ managed_components
 build/
 .DS_Store
 /sdkconfig.old
+
+# GUI generated files
+gui/__ui_project_name__/build/
+gui/__ui_project_name__/dependencies.lock

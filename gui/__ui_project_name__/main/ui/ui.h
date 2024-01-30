@@ -17,13 +17,11 @@ extern "C" {
 // SCREEN: ui_Screen1
 void ui_Screen1_screen_init(void);
 extern lv_obj_t *ui_Screen1;
-extern lv_obj_t *ui_BosseImage;
 extern lv_obj_t *ui_SubmitLabel;
 extern lv_obj_t *ui_EnterEmailField;
 extern lv_obj_t *ui_EnterPasswordField;
 extern lv_obj_t *ui____initial_actions0;
 
-LV_IMG_DECLARE( ui_img_favicon_png);   // assets/favicon.png
 
 
 

@@ -10,24 +10,16 @@ void ui_Screen1_screen_init(void)
 ui_Screen1 = lv_obj_create(NULL);
 lv_obj_clear_flag( ui_Screen1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
-ui_BosseImage = lv_img_create(ui_Screen1);
-lv_img_set_src(ui_BosseImage, &ui_img_favicon_png);
-lv_obj_set_width( ui_BosseImage, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_BosseImage, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_BosseImage, 131 );
-lv_obj_set_y( ui_BosseImage, -1 );
-lv_obj_set_align( ui_BosseImage, LV_ALIGN_CENTER );
-lv_obj_add_flag( ui_BosseImage, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
-lv_obj_clear_flag( ui_BosseImage, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-lv_img_set_zoom(ui_BosseImage,10);
-
 ui_SubmitLabel = lv_label_create(ui_Screen1);
 lv_obj_set_width( ui_SubmitLabel, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_SubmitLabel, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_SubmitLabel, -39 );
+lv_obj_set_x( ui_SubmitLabel, -4 );
 lv_obj_set_y( ui_SubmitLabel, 0 );
 lv_obj_set_align( ui_SubmitLabel, LV_ALIGN_CENTER );
-lv_label_set_text(ui_SubmitLabel,"Push both buttons to Submit");
+lv_label_set_text(ui_SubmitLabel,"Submit to Bosse pressing both buttons");
+lv_obj_set_style_text_color(ui_SubmitLabel, lv_color_hex(0xBFBFBF), LV_PART_MAIN | LV_STATE_DEFAULT );
+lv_obj_set_style_text_opa(ui_SubmitLabel, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
+lv_obj_set_style_text_font(ui_SubmitLabel, &lv_font_montserrat_14, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_EnterEmailField = lv_textarea_create(ui_Screen1);
 lv_obj_set_width( ui_EnterEmailField, 300);
@@ -38,6 +30,8 @@ lv_obj_set_align( ui_EnterEmailField, LV_ALIGN_CENTER );
 lv_textarea_set_placeholder_text(ui_EnterEmailField,"Enter Email Address (Push Button)");
 
 
+lv_obj_set_style_text_color(ui_EnterEmailField, lv_color_hex(0xBFBFBF), LV_PART_TEXTAREA_PLACEHOLDER | LV_STATE_DEFAULT );
+lv_obj_set_style_text_opa(ui_EnterEmailField, 255, LV_PART_TEXTAREA_PLACEHOLDER| LV_STATE_DEFAULT);
 
 ui_EnterPasswordField = lv_textarea_create(ui_Screen1);
 lv_obj_set_width( ui_EnterPasswordField, 300);
@@ -48,5 +42,7 @@ lv_obj_set_align( ui_EnterPasswordField, LV_ALIGN_CENTER );
 lv_textarea_set_placeholder_text(ui_EnterPasswordField,"Enter Password (Push Button)");
 
 
+lv_obj_set_style_text_color(ui_EnterPasswordField, lv_color_hex(0xBFBFBF), LV_PART_TEXTAREA_PLACEHOLDER | LV_STATE_DEFAULT );
+lv_obj_set_style_text_opa(ui_EnterPasswordField, 255, LV_PART_TEXTAREA_PLACEHOLDER| LV_STATE_DEFAULT);
 
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "nvs_flash.h"
 
 #include "app_common.h"
 #include "esp_hardware.h"
@@ -8,6 +9,10 @@
 #include "connect_mqtt.h"
 #include "gui_buttons.h"
 #include "gui_textfields.h"
+
+// Declarations for Wi-Fi and MQTT task functions
+void wifi_task(void *pvParameters);
+void mqtt_task(void *pvParameters);
 
 void app_main(void) {
     // LVGL display driver & handle
@@ -17,7 +22,7 @@ void app_main(void) {
     // Initialize the LCD
     lcd_init(disp_drv, &disp_handle, false); 
 
-    // FreeRTOS task using second core (core 0 will be dedicated to wifi, bt etc)
+    // FreeRTOS task using second core (core 0 will be dedicated to wifi, mqtt, bt etc)
     xTaskCreatePinnedToCore(ui_update_task, "update_ui", 4096 * 2, NULL, 0, NULL, 1);
 
     lcd_fade_in(); // Fade in the LCD for smooth startup
@@ -38,7 +43,26 @@ void app_main(void) {
     // Create a task for Wi-Fi - Adjust the stack size (4096) and priority (5) as needed
     xTaskCreate(&wifi_task, "wifi_task", 4096, NULL, 5, NULL); 
 
+    // Create a task for MQTT (waiting for WIFI connection)
+    xTaskCreate(&mqtt_task, "mqtt_task", 4096, NULL, 5, NULL);
+
     // Configure the hardware timer
     configure_hardware_timer();
+}
 
+void wifi_task(void *pvParameters) {
+    connect_wifi(); // Initialize and connect to Wi-Fi
+
+    vTaskDelete(NULL); // Delete the task if it's done
+}
+
+void mqtt_task(void *pvParameters) {
+    while (wifi_connect_status == 0) {    // TODO: Replace with RTOS event group
+        vTaskDelay(pdMS_TO_TICKS(1000)); // Check every second for Wi-Fi connection
+    }
+
+    ESP_LOGI(TAG, "Wi-Fi Connected. Starting MQTT...");
+    mqtt_app_start();
+
+    vTaskDelete(NULL); // Clean up the task when done
 }

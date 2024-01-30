@@ -1,5 +1,6 @@
 #include "gui_buttons.h"
 #include "app_common.h"
+#include "connect_mqtt.h" // Sending credentials over MQTT
 #include <esp_log.h>
 
 // GPIO pin numbers for the buttons
@@ -77,7 +78,7 @@ void button_press_down_cb(void *arg, void *usr_data) {
     }
 
     if (btn_1_pressed && btn_2_pressed) {
-        // Placeholder function for sending email and password over MQTT
+        // Pass the textfields to connect_mqtt.c for parsing and publishing
         send_credentials_over_mqtt(ui_EnterEmailField, ui_EnterPasswordField);
 
         // Clear the input fields & unfocus

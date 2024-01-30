@@ -72,12 +72,3 @@ void update_wifi_status_ui(bool connected) {
         lv_obj_set_style_text_color(ui_SubmitLabel, lv_color_make(255, 0, 0), LV_PART_MAIN); // Red color
     }
 }
-
-// Placeholder function definition, needs to be implemented
-void send_credentials_over_mqtt(lv_obj_t* emailField, lv_obj_t* passwordField) {
-    const char* email = lv_textarea_get_text(emailField);
-    const char* password = lv_textarea_get_text(passwordField);
-
-    // TODO: Implement MQTT sending logic here
-    ESP_LOGI(TAG, "Sending credentials over MQTT - Email: %s, Password: %s", email, password);
-}

@@ -18,7 +18,7 @@ void update_hw_info_timer_cb(void *arg) {
 
 void update_ui() {
     // Perform your ui updates here
-    ESP_LOGI(TAG, "update_ui function call");
+    // ESP_LOGI(TAG, "update_ui function call");
 }
 
 void ui_update_task(void *pvParam) {

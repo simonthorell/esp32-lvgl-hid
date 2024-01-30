@@ -21,6 +21,5 @@ void setup_inputfields();
 void clear_textarea(lv_timer_t* timer);
 void revert_label_style(lv_timer_t* timer);
 void update_wifi_status_ui(bool connected);
-void send_credentials_over_mqtt(lv_obj_t* emailField, lv_obj_t* passwordField);
 
 #endif // GUI_TEXTFIELDS_H

@@ -27,13 +27,6 @@ int wifi_connect_status = 0;
 
 static const char *TAG = "wifi_connect"; // TAG for debug
 
-void wifi_task(void *pvParameters) {
-    // Initialize and connect to Wi-Fi
-    connect_wifi();
-    // Delete the task if it's done
-    vTaskDelete(NULL);
-}
-
 static void event_handler(void *arg, esp_event_base_t event_base,
                           int32_t event_id, void *event_data)
 {

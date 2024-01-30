@@ -1,7 +1,15 @@
 #include "connect_wifi.h"
+#include "secret_credentials.h" // Wifi SSID and password
+#include "gui_textfields.h"      // Update the wifi status UI
 
+#ifndef EXAMPLE_ESP_WIFI_SSID
 #define EXAMPLE_ESP_WIFI_SSID "Wokwi-GUEST"
+#endif
+
+#ifndef EXAMPLE_ESP_WIFI_PASS
 #define EXAMPLE_ESP_WIFI_PASS ""
+#endif
+
 
 #define EXAMPLE_ESP_MAXIMUM_RETRY 30
 
@@ -14,17 +22,24 @@ static EventGroupHandle_t s_wifi_event_group;
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT BIT1
 
-
 static int s_retry_num = 0;
 int wifi_connect_status = 0;
 
 static const char *TAG = "wifi_connect"; // TAG for debug
+
+void wifi_task(void *pvParameters) {
+    // Initialize and connect to Wi-Fi
+    connect_wifi();
+    // Delete the task if it's done
+    vTaskDelete(NULL);
+}
 
 static void event_handler(void *arg, esp_event_base_t event_base,
                           int32_t event_id, void *event_data)
 {
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
     {
+        update_wifi_status_ui(false); // Let user know we're connecting to Wi-Fi
         esp_wifi_connect();
     }
     else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
@@ -41,6 +56,7 @@ static void event_handler(void *arg, esp_event_base_t event_base,
         }
         wifi_connect_status = 0;
         ESP_LOGI(TAG, "connect to the AP fail");
+        update_wifi_status_ui(false); // Update UI to show Wi-Fi disconnected
     }
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
     {
@@ -49,6 +65,7 @@ static void event_handler(void *arg, esp_event_base_t event_base,
         s_retry_num = 0;
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
         wifi_connect_status = 1;
+        update_wifi_status_ui(true); // Update UI to show Wi-Fi connected
     }
 }
 
@@ -80,7 +97,7 @@ void connect_wifi(void)
     wifi_config_t wifi_config = {
         .sta = {
             .ssid = EXAMPLE_ESP_WIFI_SSID,
-            //.password = EXAMPLE_ESP_WIFI_PASS,
+            .password = EXAMPLE_ESP_WIFI_PASS,
             /* Setting a password implies station will connect to all security modes including WEP/WPA.
              * However these modes are deprecated and not advisable to be used. Incase your Access point
              * doesn't support WPA2, these mode can be enabled by commenting below line */

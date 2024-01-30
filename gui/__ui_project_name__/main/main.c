@@ -10,6 +10,22 @@
 #include "gui_textfields.h"
 
 void app_main(void) {
+    // LVGL display driver & handle
+    static lv_disp_drv_t disp_drv; 
+    static lv_disp_t *disp_handle;
+
+    // Initialize the LCD
+    lcd_init(disp_drv, &disp_handle, false); 
+
+    // FreeRTOS task using second core (core 0 will be dedicated to wifi, bt etc)
+    xTaskCreatePinnedToCore(ui_update_task, "update_ui", 4096 * 2, NULL, 0, NULL, 1);
+
+    lcd_fade_in(); // Fade in the LCD for smooth startup
+
+    // Setup the GUI components
+    setup_buttons();
+    setup_inputfields();
+
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();
     ESP_LOGI("CH", "%d ret", ret);
@@ -19,21 +35,10 @@ void app_main(void) {
 		ret = nvs_flash_init();
 	}
 
-    // connect_wifi(); // Connect to wifi
+    // Create a task for Wi-Fi - Adjust the stack size (4096) and priority (5) as needed
+    xTaskCreate(&wifi_task, "wifi_task", 4096, NULL, 5, NULL); 
 
-    static lv_disp_drv_t disp_drv; // LVGL display driver
-    static lv_disp_t *disp_handle; // LVGL display handle
+    // Configure the hardware timer
+    configure_hardware_timer();
 
-    lcd_init(disp_drv, &disp_handle, false);  // initialize the LCD
-
-    setup_buttons(); // Configure the buttons
-
-    configure_hardware_timer(); // Configure the hardware timer
-
-    // FreeRTOS task using second core (core 0 will be dedicated to wifi, bt etc)
-    xTaskCreatePinnedToCore(ui_update_task, "update_ui", 4096 * 2, NULL, 0, NULL, 1);
-
-    lcd_fade_in(); // Fade in the LCD for smooth startup
-
-    setup_inputfields(); // Configure the input field styles
 }

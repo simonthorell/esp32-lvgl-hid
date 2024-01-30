@@ -1,4 +1,5 @@
 #include "gui_buttons.h"
+#include "app_common.h"
 #include <esp_log.h>
 
 // GPIO pin numbers for the buttons

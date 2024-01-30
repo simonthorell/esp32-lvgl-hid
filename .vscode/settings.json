@@ -11,6 +11,11 @@
         "ui.h": "c",
         "gui_buttons.h": "c",
         "connect_mqtt.h": "c",
-        "app_common.h": "c"
+        "app_common.h": "c",
+        "esp_wifi.h": "c",
+        "api.h": "c",
+        "gui_textfields.h": "c",
+        "secret_credentials.h": "c",
+        "esp_system.h": "c"
     }
 }

@@ -4,7 +4,6 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#include "app_common.h"
 #include "t_display_s3.h" // for BTN_PIN_NUM_1, BTN_PIN_NUM_2
 #include "ui/ui.h"
 #include "iot_button.h"

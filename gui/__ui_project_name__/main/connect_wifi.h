@@ -19,6 +19,7 @@
 
 extern int wifi_connect_status;
 
+void wifi_task(void *pvParameters);
 void connect_wifi(void);
 
 #endif

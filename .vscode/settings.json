@@ -1,5 +1,12 @@
 {
     "idf.adapterTargetName": "esp32s3",
     "idf.port": "/dev/cu.usbmodem1101",
-    "idf.flashType": "UART"
+    "idf.flashType": "UART",
+    "files.associations": {
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "span": "c",
+        "cstdlib": "c"
+    }
 }

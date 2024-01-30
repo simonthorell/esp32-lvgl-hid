@@ -9,3 +9,4 @@ dependencies:
   idf:
     version: '>=5.3.0'
   # espressif/esp-idf-cxx: "^1.0.0-beta" # C++ support
+  espressif/esp-mqtt: "*" # latest version

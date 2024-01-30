@@ -43,6 +43,11 @@ static bool is_btn_1_held = false;
 static bool is_btn_2_held = false;
 static const uint32_t HOLD_TIME_MS = 1000; // 1 seconds
 
+// Submit label (change on submit for 1 second)
+static lv_color_t original_text_color;    // Store the original text color
+static const char* original_text = "Submit to Bosse pressing both buttons";
+static lv_timer_t* revert_timer = NULL;
+
 // Setup style for input fields
 void setup_inputfields() {
     lv_textarea_set_password_mode(ui_EnterPasswordField, true);
@@ -60,8 +65,6 @@ void setup_inputfields() {
 
 // Clear the textfield when button is held for 2 seconds
 static void clear_textarea(lv_timer_t* timer) {
-    // Cast the user_data to lv_obj_t
-    lv_obj_t* textarea = (lv_obj_t*)timer->user_data;
 
     if (is_btn_1_held) {
         lv_textarea_set_text(ui_EnterEmailField, "");
@@ -74,6 +77,16 @@ static void clear_textarea(lv_timer_t* timer) {
     // Stop and delete the timer as its job is done
     lv_timer_del(timer);
     hold_timer = NULL;
+}
+
+static void revert_label_style(lv_timer_t* timer) {
+    // Revert the label's text and color
+    lv_label_set_text(ui_SubmitLabel, original_text);
+    lv_obj_set_style_text_color(ui_SubmitLabel, original_text_color, LV_PART_MAIN);
+
+    // Delete the timer as its job is done
+    lv_timer_del(timer);
+    revert_timer = NULL;
 }
 
 // Placeholder function definition, needs to be implemented
@@ -124,6 +137,17 @@ static void button_press_down_cb(void *arg, void *usr_data) {
         lv_textarea_set_text(ui_EnterPasswordField, "");
         lv_obj_add_style(ui_EnterEmailField, &style_ta_unfocused, LV_PART_MAIN);
         lv_obj_add_style(ui_EnterPasswordField, &style_ta_unfocused, LV_PART_MAIN);
+
+        // Change the label's text and color on submit
+        original_text_color = lv_obj_get_style_text_color(ui_SubmitLabel, LV_PART_MAIN); // Save the original color
+
+        lv_label_set_text(ui_SubmitLabel, "Submitted to Bosse!");
+        lv_obj_set_style_text_color(ui_SubmitLabel, lv_color_make(0, 255, 0), LV_PART_MAIN);
+
+        // Start a timer to revert the changes after 2 seconds
+        if (revert_timer == NULL) {
+            revert_timer = lv_timer_create(revert_label_style, 1500, NULL);
+        }
     }
 }
 

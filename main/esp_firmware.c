@@ -67,7 +67,7 @@ void firmware_update_check(double FIRMWARE_VERSION, const char* UPDATE_JSON_URL)
 					double new_version = version->valuedouble;
 					if(new_version > FIRMWARE_VERSION) {
 						
-						printf("current firmware version (%.1f) is lower than the available one (%.1f), upgrading...\n", FIRMWARE_VERSION, new_version);
+						printf("current firmware version (%.2f) is lower than the available one (%.2f), upgrading...\n", FIRMWARE_VERSION, new_version);
 						if(cJSON_IsString(file) && (file->valuestring != NULL)) {
 							printf("downloading and installing new firmware (%s)...\n", file->valuestring);
 							
@@ -90,7 +90,7 @@ void firmware_update_check(double FIRMWARE_VERSION, const char* UPDATE_JSON_URL)
 						}
 						else printf("unable to read the new file name, aborting...\n");
 					}
-					else printf("current firmware version (%.1f) is greater or equal to the available one (%.1f), nothing to do...\n", FIRMWARE_VERSION, new_version);
+					else printf("current firmware version (%.2f) is greater or equal to the available one (%.2f), nothing to do...\n", FIRMWARE_VERSION, new_version);
 				}
 			}
 		}

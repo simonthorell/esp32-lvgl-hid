@@ -1,9 +1,5 @@
 # _ESP32 LVGL HDI_
 
-## NOTICE! 
-As of 2024-01-31 this README file is obsolete due to complete repo refactoring. Update will follow... // ST
-
-## Overview
 This template provides a starting point for creating a GUI application on the ESP32-S3 microcontroller using the LittlevGL (LVGL) graphics library and the ESP-IDF framework. The template includes configuration for a 1.9" ST7789 LCD Screen and demonstrates the basics of using LVGL with ESP32 as well as connecting Keyboard and Mouse using USB HDI.
 
 ## Pre-requisites

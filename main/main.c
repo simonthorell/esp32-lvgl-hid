@@ -5,14 +5,16 @@
 
 #include "app_common.h"
 #include "esp_hardware.h"
-#include "esp_firmware.h" // OTA firmware update
+#include "esp_firmware.h"
 // #include "esp_usb_hid.h"
 #include "connect_wifi.h"
 #include "connect_mqtt.h"
 #include "gui_buttons.h"
 #include "gui_textfields.h"
 
-#define FIRMWARE_VERSION 0.02 // Firmware version, used for FOTA (Max 2 decimal places)
+/* TODO: Fix the CMake copy-script to ensure the last built firmware .bin-file is copied.
+         to the firmware folder. Also update firmware.json version as set in main.c. */
+#define FIRMWARE_VERSION 0.01 // Firmware version, used for FOTA (Max 2 decimal places)
 #define UPDATE_JSON_URL "https://raw.githubusercontent.com/simonthorell/esp32-lvgl-hid/main/bin/firmware.json"
 
 // Declare functions for FreeRTOS tasks

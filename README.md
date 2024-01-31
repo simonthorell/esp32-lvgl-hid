@@ -78,7 +78,7 @@ This template was created using the following steps:
   - Save  
 
 ## Build & Flash Wih GUI
-- *TODO: Replace this with .devcontainer and GitHub Actions for auto-build!*
+- *TODO: Replace this with .devcontainer and GitHub Actions for auto-build and firmware update release!*
 - Move into project folder, build & flash using the idf.py tool.
   ```bash
   get_idf                                      # Get ESP-IDF tools
@@ -94,6 +94,17 @@ This template was created using the following steps:
   idf.py clean
   idf.py fullclean
   ```
+## Setup Firmware Over The Air (FOTA)
+- See file `partition_table.csv` and main folder as well as `firmware.bin` and `firmware.json`in the bin-folder.
+- In `ESP-IDF menuconfig` search for *"Partition table"*. In this project option 2 is used as the firmware is larger than the standard size of 1 MB.
+  - Option 1. Use *"Factory app, two OTA definitions"* to use standard partition size (1MB per partition). 
+  - Option 2. Use *"Custom partition table CSV"* and add the `partition_table.csv` file. You can edit the size of the partitions directly in this file depending on your specific ESP32 microcontroller.
+- The firmware check is done in the FreeRTOS task: *"fota_task"* defined in `main.c`. For details of implementation, see the file `esp_firmware.c`.
+- In the src `CMakeLists.txt`, the following has to be added to the **REQUIRES**: `esp_http_client esp_https_ota json` under **idf_component_register**.
+- When building the project, `check_and_copy.cmake` and src `CMakeLists.txt` will find and copy the built .bin-file to the firmware folder automatically.
+- Update the paths in `main.cpp` and `firmware.json` to your own firmware update path. In this project we use GitHub only.
+- When you are ready to release and push the firmware update, change the version numbers in `main.cpp` and `firmware.json` - then commit to main branch. Monitor the MCU over UART to check that the device is correctly requesting and getting the latest update. 
+- Once the MCU has downloaded and installed the new firmware, it will reboot to the opposite ota partition and display firmware version on the LCD.
 
 ## Build Your Project Without GUI [Optional]
 - Press `CMD + Shift + P` and type `ESP-IDF: Build your Project`

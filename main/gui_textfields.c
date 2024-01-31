@@ -72,3 +72,12 @@ void update_wifi_status_ui(bool connected) {
         lv_obj_set_style_text_color(ui_SubmitLabel, lv_color_make(255, 0, 0), LV_PART_MAIN); // Red color
     }
 }
+
+
+void firmware_version_ui(double FIRMWARE_VERSION) {
+    char buffer[32]; // Buffer to hold the formatted string, adjust size as needed
+    sprintf(buffer, "Firmware version: %.2f", FIRMWARE_VERSION); // %.2f limits the double to two decimal places
+
+    lv_label_set_text(ui_SubmitLabel, buffer);
+    lv_obj_set_style_text_color(ui_SubmitLabel, lv_color_make(0, 0, 255), LV_PART_MAIN); // Blue color
+}

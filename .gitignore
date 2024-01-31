@@ -5,8 +5,8 @@ build/
 
 # Keep Squareline GUI save files only
 squareline/
-!squareline/SquarelineGUI.sll
-!squareline/SquarelineGUI.spj
+!squareline/SquareLine_GUI.sll
+!squareline/SquareLine_GUI.spj
 
 # Secret credentials (wifi and MQTT)
 main/include/secret_credentials.h

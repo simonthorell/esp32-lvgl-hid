@@ -11,6 +11,9 @@
 #include "gui_buttons.h"
 #include "gui_textfields.h"
 
+#define FIRMWARE_VERSION "0.1"
+#define FIRMWARE_UPDATE_JSON_URL "https://www.github.com/simonthorell/esp32-lvgl-hid/bin/firmware.json"
+
 // Declare functions for FreeRTOS tasks
 void wifi_task(void *pvParameters);
 void mqtt_task(void *pvParameters);

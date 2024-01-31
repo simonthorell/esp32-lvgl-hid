@@ -12,7 +12,7 @@
 #include "gui_buttons.h"
 #include "gui_textfields.h"
 
-#define FIRMWARE_VERSION 0.02 // Firmware version, used for FOTA (Max 2 decimal places)
+#define FIRMWARE_VERSION 0.01 // Firmware version, used for FOTA (Max 2 decimal places)
 #define UPDATE_JSON_URL "https://raw.githubusercontent.com/simonthorell/esp32-lvgl-hid/main/bin/firmware.json"
 
 // Declare functions for FreeRTOS tasks

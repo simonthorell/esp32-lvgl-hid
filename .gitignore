@@ -9,4 +9,4 @@ squareline/backup/
 squareline/cache/
 
 # Secret credentials
-main/secret_credentials.h
+main/include/secret_credentials.h

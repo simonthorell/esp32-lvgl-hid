@@ -11,4 +11,4 @@ add_custom_target(copy_firmware ALL
         COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/bin"
         COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/esp32-lvgl-hid.bin" "${CMAKE_SOURCE_DIR}/bin/firmware.bin"
         COMMENT "Copying esp32-lvgl-hid.bin to bin/firmware.bin"
-        )
+)

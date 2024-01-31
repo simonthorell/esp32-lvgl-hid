@@ -3,10 +3,10 @@ build/
 .DS_Store
 /sdkconfig.old
 
-# Squareline GUI files
-squareline/autosave/
-squareline/backup/
-squareline/cache/
+# Keep Squareline GUI save files only
+squareline/
+!squareline/SquarelineGUI.sll
+!squareline/SquarelineGUI.spj
 
-# Secret credentials
+# Secret credentials (wifi and MQTT)
 main/include/secret_credentials.h

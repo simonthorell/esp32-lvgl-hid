@@ -1,4 +1,26 @@
 {
     "idf.adapterTargetName": "esp32s3",
-    "idf.port": "/dev/cu.usbmodem1101"
+    "idf.port": "/dev/cu.usbmodem1101",
+    "idf.flashType": "UART",
+    "files.associations": {
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "span": "c",
+        "cstdlib": "c",
+        "ui.h": "c",
+        "gui_buttons.h": "c",
+        "connect_mqtt.h": "c",
+        "app_common.h": "c",
+        "esp_wifi.h": "c",
+        "api.h": "c",
+        "gui_textfields.h": "c",
+        "secret_credentials.h": "c",
+        "esp_system.h": "c",
+        "esp_err.h": "c",
+        "hid.h": "c",
+        "hid_host.h": "c",
+        "hid_usage_keyboard.h": "c",
+        "esp_usb_hid.h": "c"
+    }
 }

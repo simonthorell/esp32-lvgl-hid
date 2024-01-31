@@ -71,12 +71,22 @@ This template was created using the following steps:
   - Export the `.ui` files by clicking **Export -> Export UI Files**.
   - Save  
 
-## Build Your Project
+## Build & Flash Wih GUI
+- *TODO: Replace this with .devcontainer and GitHub Actions for auto-build!*
+- Move into the UI folder, build & flash using the idf.py tool.
+  ```bash 
+  cd gui/__ui_project_name__                # Move to GUI folder
+  get_idf                                   # Get ESP-IDF tools
+  idf.py build                              # Build to project with GUI
+  idf.py -p /dev/cu.usbmodem1101 flash       # Flash and monitor (replace with your USB-port)
+  ```
+
+## Build Your Project Without GUI [Optional]
 - Press `CMD + Shift + P` and type `ESP-IDF: Build your Project`
 - [Optional] to clean build folder press `CMD + Shift + P` and type `ESP-IDF: Full Clean Project`
 - [Optional] setup a .devcontainer and use GitHub actions to build automatically when merging to main branch. 
 
-## Flashing and Monitoring
+## Flashing and Monitoring Without GUI [Optional]
 After building the project, flash it to your ESP32-S3 and monitor the output:
 - Press `CMD + Shift + P` and type `ESP-IDF: Flash (UART) your Project`
 

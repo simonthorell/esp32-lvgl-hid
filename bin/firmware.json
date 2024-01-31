@@ -1,4 +1,4 @@
 {
-    "version": 0.1,
-    "file": "https://github.com/simonthorell/esp32-lvgl-hid/bin/firmware.bin"
+    "version": 0.01,
+    "file": "https://github.com/simonthorell/esp32-lvgl-hid/raw/8383f5bedfdbd53daff4b132fdaff00b8474f6b5/bin/firmware.bin"
 }

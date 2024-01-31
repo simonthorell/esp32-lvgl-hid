@@ -118,6 +118,7 @@ After building the project, flash it to your ESP32-S3 and monitor the output:
 - [alternatively] flash it from the command line using idf.py
 ```bash
 idf.py -p (YOUR_PORT) flash monitor
+# Press Ctrl+Å to close (Nordic keyboard)
 ```
 
 ## Contributing

@@ -32,7 +32,7 @@ static void event_handler(void *arg, esp_event_base_t event_base,
 {
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
     {
-        update_wifi_status_ui(false); // Let user know we're connecting to Wi-Fi
+        // update_wifi_status_ui(false); // replaced with display firmware version
         esp_wifi_connect();
     }
     else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)

@@ -16,6 +16,11 @@
         "api.h": "c",
         "gui_textfields.h": "c",
         "secret_credentials.h": "c",
-        "esp_system.h": "c"
+        "esp_system.h": "c",
+        "esp_err.h": "c",
+        "hid.h": "c",
+        "hid_host.h": "c",
+        "hid_usage_keyboard.h": "c",
+        "esp_usb_hid.h": "c"
     }
 }

@@ -5,14 +5,19 @@
 
 #include "app_common.h"
 #include "esp_hardware.h"
+// #include "esp_usb_hid.h"
 #include "connect_wifi.h"
 #include "connect_mqtt.h"
 #include "gui_buttons.h"
 #include "gui_textfields.h"
 
-// Declarations for Wi-Fi and MQTT task functions
+// Declare functions for FreeRTOS tasks
 void wifi_task(void *pvParameters);
 void mqtt_task(void *pvParameters);
+
+//==============================================================================
+// App Main
+//==============================================================================
 
 void app_main(void) {
     // LVGL display driver & handle
@@ -30,6 +35,9 @@ void app_main(void) {
     // Setup the GUI components
     setup_buttons();
     setup_inputfields();
+
+    // Initialize USB HID keyboard
+    // usb_host_hid_keyboard_init()
 
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();
@@ -49,6 +57,10 @@ void app_main(void) {
     // Configure the hardware timer
     configure_hardware_timer();
 }
+
+//==============================================================================
+// FreeRTOS Connectivity Tasks
+//==============================================================================
 
 void wifi_task(void *pvParameters) {
     connect_wifi(); // Initialize and connect to Wi-Fi

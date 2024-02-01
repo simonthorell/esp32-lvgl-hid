@@ -66,7 +66,7 @@ void button_press_down_cb(void *arg, void *usr_data) {
         is_btn_1_held = true; // Track if the button is held
 
         lv_textarea_set_cursor_pos(ui_EnterEmailField, LV_TEXTAREA_CURSOR_LAST); // set cursor to start of Email field
-        lv_textarea_add_text(ui_EnterEmailField, "first.lastname@emailaddress.com");
+        // lv_textarea_add_text(ui_EnterEmailField, "first.lastname@emailaddress.com");
         is_email_field_focused = true;
         lv_obj_add_style(ui_EnterEmailField, &style_ta_focused, LV_PART_MAIN); // focus
         is_password_field_focused = false;
@@ -78,7 +78,7 @@ void button_press_down_cb(void *arg, void *usr_data) {
         is_btn_2_held = true; // Track if the button is held
 
         lv_textarea_set_cursor_pos(ui_EnterPasswordField, LV_TEXTAREA_CURSOR_LAST); // set cursor to start of Password field
-        lv_textarea_add_text(ui_EnterPasswordField, "mysecretpassword123");
+        // lv_textarea_add_text(ui_EnterPasswordField, "mysecretpassword123");
         is_password_field_focused = true;
         lv_obj_add_style(ui_EnterPasswordField, &style_ta_focused, LV_PART_MAIN); // focus
         is_email_field_focused = false;

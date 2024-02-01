@@ -1,7 +1,7 @@
 file(GLOB_RECURSE SRC_UI ${CMAKE_SOURCE_DIR} "ui/*.c")
 
 idf_component_register(
-        SRCS "main.c" "connect_wifi.c" "connect_mqtt.c" "gui_buttons.c" "gui_textfields.c" 
+        SRCS "aes_encrypt.c" "main.c" "connect_wifi.c" "connect_mqtt.c" "gui_buttons.c" "gui_textfields.c" 
              "esp_hardware.c" "esp_usb_hid.c" "esp_firmware.c" ${SRC_UI}
         INCLUDE_DIRS "." "ui" "include"
         PRIV_REQUIRES tdisplays3

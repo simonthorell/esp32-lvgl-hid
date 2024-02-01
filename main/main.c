@@ -20,7 +20,7 @@ typedef enum{
 /* TODO: Fix the CMake copy-script to ensure the last built firmware .bin-file is copied.
          to the firmware folder. Also update firmware.json version as set in main.c. */
 #define APPLICATION_MODE DEVELOP
-#define FIRMWARE_VERSION 0.02 // Firmware version, used for FOTA (Max 2 decimal places)
+#define FIRMWARE_VERSION 0.03 // Firmware version, used for FOTA (Max 2 decimal places)
 #define UPDATE_JSON_URL "https://raw.githubusercontent.com/simonthorell/esp32-lvgl-hid/main/bin/firmware.json"
 // Note that repo must be public for OTA to work - log would show "unable to read new version, aborting..."
 

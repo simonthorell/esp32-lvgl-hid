@@ -3,7 +3,8 @@
 #include "esp_log.h"
 #include "esp_tls.h"
 #include "string.h"
-#include "secret_credentials.h" // Define your MQTT broker URL, username and password in this file
+#include "secret_credentials.h" // Application secrets
+#include "aes_encrypt.h" // Include the AES encryption header file
 
 static const char *TAG = "MQTT_CLIENT";
 
@@ -103,24 +104,59 @@ void mqtt_publish(const char *topic, const char *data)
     ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
 }
 
-// Function to parse the UI-textfields and send the credentials over MQTT
+// Parse and encrypt the UI fields, then send over MQTT
 void send_credentials_over_mqtt(lv_obj_t* emailField, lv_obj_t* passwordField) {
     const char* email = lv_textarea_get_text(emailField);
     const char* password = lv_textarea_get_text(passwordField);
+
+    // Define the encryption key and initialization vector (IV)
+    uint8_t key[32] = {0x00}; // Replace with your 256-bit encryption key
+    uint8_t iv[16] = {0x00};  // Replace with a random or unique IV
 
     // Define the maximum lengths for the email and password
     const int maxEmailLength = 35;
     const int maxPasswordLength = 35;
     const int maxJsonLength = maxEmailLength + maxPasswordLength + 50; // Extra space for JSON formatting
 
-    // Allocate memory for the JSON message on the stack
+    // Allocate memory for the JSON message and encrypted message on the stack
     char jsonMessage[maxJsonLength];
+    uint8_t encryptedMessage[maxJsonLength]; // AES-256 CBC output will not exceed the input length
 
     // Format the message as JSON
     snprintf(jsonMessage, sizeof(jsonMessage), "{\"email\":\"%s\", \"password\":\"%s\"}", email, password);
 
-    // Publish the JSON message to the MQTT topic
-    mqtt_publish(MQTT_TOPIC, jsonMessage);
+    // Encrypt the JSON message using AES-256 CBC
+    int encryptionResult = aes256_cbc_encrypt((const uint8_t*)jsonMessage, key, iv, encryptedMessage);
 
-    ESP_LOGI(TAG, "Credentials sent over MQTT: [JSON hidden]");
+    if (encryptionResult != 0) {
+        ESP_LOGE(TAG, "Encryption failed!");
+        return; // Handle the error accordingly
+    }
+
+    // Publish the encrypted message to the MQTT topic
+    mqtt_publish(MQTT_TOPIC, (const char*)encryptedMessage);
+
+    ESP_LOGI(TAG, "Credentials sent over MQTT (Encrypted): [Encrypted Data]");
 }
+
+// Function to parse the UI-textfields and send the credentials over MQTT (no encryption)
+// void send_credentials_over_mqtt(lv_obj_t* emailField, lv_obj_t* passwordField) {
+//     const char* email = lv_textarea_get_text(emailField);
+//     const char* password = lv_textarea_get_text(passwordField);
+
+//     // Define the maximum lengths for the email and password
+//     const int maxEmailLength = 35;
+//     const int maxPasswordLength = 35;
+//     const int maxJsonLength = maxEmailLength + maxPasswordLength + 50; // Extra space for JSON formatting
+
+//     // Allocate memory for the JSON message on the stack
+//     char jsonMessage[maxJsonLength];
+
+//     // Format the message as JSON
+//     snprintf(jsonMessage, sizeof(jsonMessage), "{\"email\":\"%s\", \"password\":\"%s\"}", email, password);
+
+//     // Publish the JSON message to the MQTT topic
+//     mqtt_publish(MQTT_TOPIC, jsonMessage);
+
+//     ESP_LOGI(TAG, "Credentials sent over MQTT: [JSON hidden]");
+// }

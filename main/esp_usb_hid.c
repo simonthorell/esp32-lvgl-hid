@@ -1,4 +1,5 @@
 #include "esp_usb_hid.h"
+#include "gui_buttons.h" // For focus variables
 
 /**
  * @brief HID Protocol string names
@@ -8,23 +9,6 @@ static const char *hid_proto_name_str[] = {
     "KEYBOARD",
     "MOUSE"
 };
-
-/**
- * @brief Key event
- */
-typedef struct {
-    enum key_state {
-        KEY_STATE_PRESSED = 0x00,
-        KEY_STATE_RELEASED = 0x01
-    } state;
-    uint8_t modifier;
-    uint8_t key_code;
-} key_event_t;
-
-/* Main char symbol for ENTER key */
-#define KEYBOARD_ENTER_MAIN_CHAR    '\r'
-/* When set to 1 pressing ENTER will be extending with LineFeed during serial debug output */
-#define KEYBOARD_ENTER_LF_EXTEND    1
 
 /**
  * @brief Scancode to ascii table
@@ -88,6 +72,62 @@ const uint8_t keycode2ascii [57][2] = {
     {'.', '>'}, /* HID_KEY_GREATER         */
     {'/', '?'} /* HID_KEY_SLASH           */
 };
+
+//==============================================================================
+// Application UI integration
+//==============================================================================
+
+void handle_key_press_in_ui(char key_char) {
+    // Check which field is focused
+    if (is_email_field_focused) {
+        // Check for special keys like delete
+        if (key_char == '\b') {
+            // Handle backspace (delete last character)
+            lv_textarea_del_char(ui_EnterEmailField);
+        } else {
+            // Convert char to string for lv_textarea_add_text
+            char str[2] = {key_char, '\0'};
+            lv_textarea_add_text(ui_EnterEmailField, str);
+        }
+    } else if (is_password_field_focused) {
+        // Check for special keys like delete
+        if (key_char == '\b') {
+            // Handle backspace (delete last character)
+            lv_textarea_del_char(ui_EnterPasswordField);
+        } else {
+            // Convert char to string for lv_textarea_add_text
+            char str[2] = {key_char, '\0'};
+            lv_textarea_add_text(ui_EnterPasswordField, str);
+        }
+    }
+}
+
+// Function to get ASCII character from key code
+bool get_ascii_from_keycode(uint8_t modifier, uint8_t key_code, char *key_char) {
+    uint8_t mod = (modifier & (HID_LEFT_SHIFT | HID_RIGHT_SHIFT)) ? 1 : 0;
+
+    if ((key_code >= HID_KEY_A) && (key_code <= HID_KEY_SLASH)) {
+        *key_char = keycode2ascii[key_code][mod];
+        return true;
+    } else {
+        // Special handling for non-printable characters
+        // For example, you might handle Enter (HID_KEY_ENTER), Backspace (HID_KEY_DEL), etc.
+        // Here's an example for handling Enter and Backspace
+        switch (key_code) {
+            case HID_KEY_ENTER:
+                *key_char = '\n';  // New line character for Enter key
+                return true;
+            case HID_KEY_DEL:
+                *key_char = '\b';  // Backspace character
+                return true;
+            // Add cases for other special keys as needed
+            default:
+                return false;  // Keycode not handled
+        }
+
+        return false;
+    }
+}
 
 //==============================================================================
 // HID Host Functions

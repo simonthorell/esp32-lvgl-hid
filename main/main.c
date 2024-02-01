@@ -12,9 +12,15 @@
 #include "gui_buttons.h"
 #include "gui_textfields.h"
 
+typedef enum{
+    RELEASE, // Use as false
+    DEVELOP  // Use as true
+} app_mode_t;
+
 /* TODO: Fix the CMake copy-script to ensure the last built firmware .bin-file is copied.
          to the firmware folder. Also update firmware.json version as set in main.c. */
-#define FIRMWARE_VERSION 0.02 // Firmware version, used for FOTA (Max 2 decimal places)
+#define APPLICATION_MODE DEVELOP
+#define FIRMWARE_VERSION 0.03 // Firmware version, used for FOTA (Max 2 decimal places)
 #define UPDATE_JSON_URL "https://raw.githubusercontent.com/simonthorell/esp32-lvgl-hid/main/bin/firmware.json"
 
 // Declare functions for FreeRTOS tasks
@@ -111,12 +117,43 @@ void usb_hid_task(void *pvParameters) {
     // Variables for storing events
     app_event_queue_t evt_queue;
 
+    key_event_t key_event;
+
     // Main loop to handle USB events
     while (1) {
         // Wait for an event to be posted to the queue
         if (xQueueReceive(app_event_queue, &evt_queue, portMAX_DELAY)) {
             if (evt_queue.event_group == APP_EVENT) {
                 // Handle application-specific events, such as a button press to exit
+
+                if (evt_queue.event_group == APP_EVENT_HID_HOST) {
+                    // Cast the arg to key_event_t and process
+                    key_event = *(key_event_t *)evt_queue.hid_host_device.arg;
+
+                    // Simulate key press for testing
+                    if (APPLICATION_MODE == DEVELOP)
+                    for (char simulated_key = 'a'; simulated_key <= 'z'; ++simulated_key) {
+                        // Simulate key press
+                        char key_char = simulated_key;
+
+                        // Handle the simulated key press as if it was a real key press
+                        handle_key_press_in_ui(key_char);
+
+                        // Wait for 1 second before simulating the next key press
+                        vTaskDelay(pdMS_TO_TICKS(1000));
+                    }
+
+                    // Process the key event
+                    if (key_event.state == KEY_STATE_PRESSED) {
+                        char key_char;
+                        if (get_ascii_from_keycode(key_event.modifier, key_event.key_code, &key_char)) {
+                            // Send key_char to the UI
+                            // Assuming you have a function to handle this
+                            handle_key_press_in_ui(key_char);
+                        }
+                    }
+                }
+
                 // ...
             } else if (evt_queue.event_group == APP_EVENT_HID_HOST) {
                 // Handle HID host events, such as device connection/disconnection or input report

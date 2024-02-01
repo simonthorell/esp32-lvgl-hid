@@ -23,6 +23,9 @@ void wifi_task(void *pvParameters);
 void mqtt_task(void *pvParameters);
 void fota_task(void *pvParameters);
 
+// Queue for HID events
+QueueHandle_t app_event_queue = NULL;
+
 //==============================================================================
 // App Main
 //==============================================================================
@@ -48,9 +51,6 @@ void app_main(void) {
     // Fade in the LCD for smooth startup
     lcd_fade_in();
 
-    // Initialize USB HID keyboard
-    // xTaskCreate(&usb_hid_task, "usb_hid_task", 4096, NULL, 5, 0); 
-
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();
     ESP_LOGI("CH", "%d ret", ret);
@@ -66,6 +66,16 @@ void app_main(void) {
     // Create a task for MQTT - Priority 5 (High)
     xTaskCreate(&mqtt_task, "mqtt_task", 4096, NULL, 5, 0);
 
+    // Create a queue for HID events
+    app_event_queue = xQueueCreate(10, sizeof(app_event_queue_t)); // Adjust size as necessary
+    if (app_event_queue == NULL) {
+        ESP_LOGE(TAG, "Failed to create event queue");
+        vTaskDelete(NULL); // Delete this task if the queue creation failed
+    }
+
+    // Create and start the USB HID task
+    xTaskCreate(&usb_hid_task, "usb_hid_task", 4096, NULL, 5, NULL);
+
     // Create a task for FOTA - Priority 3 (Medium)
     xTaskCreate(&fota_task, "fota_task", configMINIMAL_STACK_SIZE * 4, NULL, 3, 0);
 
@@ -78,10 +88,52 @@ void app_main(void) {
 //==============================================================================
 
 void usb_hid_task(void *pvParameters) {
-    ESP_LOGI(TAG, "Connecting USB HID Peripherals...");
-    esp_usb_hid_init(); // Initialize USB HID for keyboard input
-    
-    vTaskDelete(NULL); // Clean up the task when done
+    // Initialize the USB Host Library
+    const usb_host_config_t host_config = {
+        .skip_phy_setup = false,
+        .intr_flags = ESP_INTR_FLAG_LEVEL1,
+    };
+    ESP_ERROR_CHECK(usb_host_install(&host_config));
+
+    // HID host driver configuration
+    const hid_host_driver_config_t hid_host_driver_config = {
+        .create_background_task = true,
+        .task_priority = 5,
+        .stack_size = 4096,
+        .core_id = 0,
+        .callback = hid_host_device_callback,
+        .callback_arg = NULL
+    };
+
+    // Install HID host driver
+    ESP_ERROR_CHECK(hid_host_install(&hid_host_driver_config));
+
+    // Variables for storing events
+    app_event_queue_t evt_queue;
+
+    // Main loop to handle USB events
+    while (1) {
+        // Wait for an event to be posted to the queue
+        if (xQueueReceive(app_event_queue, &evt_queue, portMAX_DELAY)) {
+            if (evt_queue.event_group == APP_EVENT) {
+                // Handle application-specific events, such as a button press to exit
+                // ...
+            } else if (evt_queue.event_group == APP_EVENT_HID_HOST) {
+                // Handle HID host events, such as device connection/disconnection or input report
+                hid_host_device_event(evt_queue.hid_host_device.handle,
+                                      evt_queue.hid_host_device.event,
+                                      evt_queue.hid_host_device.arg);
+            }
+        }
+    }
+
+    // Cleanup: Uninstall HID host and USB host library
+    hid_host_uninstall();
+    usb_host_uninstall();
+    vQueueDelete(app_event_queue);
+
+    // Delete the task itself
+    vTaskDelete(NULL);
 }
 
 void wifi_task(void *pvParameters) {

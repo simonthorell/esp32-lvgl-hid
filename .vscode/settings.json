@@ -26,6 +26,7 @@
         "cstdint": "c",
         "queue.h": "c",
         "event_groups.h": "c",
-        "task.h": "c"
+        "task.h": "c",
+        "gpio.h": "c"
     }
 }

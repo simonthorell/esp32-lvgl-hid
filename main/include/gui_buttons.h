@@ -14,6 +14,10 @@
 extern gpio_num_t btn_gpio_nums[2];
 extern button_handle_t btn_handles[2];
 
+// USB HID keyboard input handling
+extern bool is_email_field_focused;
+extern bool is_password_field_focused;
+
 // Declare global variables related to button press functionality
 extern bool btn_1_pressed;
 extern bool btn_2_pressed;

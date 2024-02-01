@@ -7,6 +7,9 @@
 
 static const char *TAG = "MQTT_CLIENT";
 
+extern const uint8_t server_cert_pem_start[] asm("_binary_ca_chain_pem_start");
+extern const uint8_t server_cert_pem_end[] asm("_binary_ca_chain_pem_end");
+
 // Global variable for the MQTT client handle
 static esp_mqtt_client_handle_t client = NULL;
 
@@ -60,11 +63,18 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 }
 
 void mqtt_app_start(void) {
+    //********************************************************************************
+    // TODO: Create an esp_tls_cfg_t struct for SSL/TLS configuration
+    //           / STH 2024-01-30
+    //********************************************************************************
     const esp_mqtt_client_config_t mqtt_cfg = {
         .broker = {
             .address = {
                 .uri = MQTT_BROKER_URL,
                 .port = MQTT_BROKER_PORT,
+            },
+            .verification = {
+                .certificate = (const char *)server_cert_pem_start,
             },
         },
         .credentials = { // Uncomment and set these if your broker requires authentication
@@ -75,12 +85,7 @@ void mqtt_app_start(void) {
         }
     };
 
-    //********************************************************************************
-    // TODO: Create an esp_tls_cfg_t struct for SSL/TLS configuration
-    //           / STH 2024-01-30
-    //********************************************************************************
-
-    client = esp_mqtt_client_init(&mqtt_cfg);
+    client = esp_mqtt_client_init(&mqtt_cfg); //
     // Register event handler and other necessary MQTT client setup
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, client);
 

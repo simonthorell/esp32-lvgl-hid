@@ -6,7 +6,7 @@
 #include "app_common.h"
 #include "esp_hardware.h"
 #include "esp_firmware.h"
-// #include "esp_usb_hid.h"
+#include "esp_usb_hid.h"
 #include "connect_wifi.h"
 #include "connect_mqtt.h"
 #include "gui_buttons.h"
@@ -14,10 +14,11 @@
 
 /* TODO: Fix the CMake copy-script to ensure the last built firmware .bin-file is copied.
          to the firmware folder. Also update firmware.json version as set in main.c. */
-#define FIRMWARE_VERSION 0.01 // Firmware version, used for FOTA (Max 2 decimal places)
+#define FIRMWARE_VERSION 0.02 // Firmware version, used for FOTA (Max 2 decimal places)
 #define UPDATE_JSON_URL "https://raw.githubusercontent.com/simonthorell/esp32-lvgl-hid/main/bin/firmware.json"
 
 // Declare functions for FreeRTOS tasks
+void usb_hid_task(void *pvParameters);
 void wifi_task(void *pvParameters);
 void mqtt_task(void *pvParameters);
 void fota_task(void *pvParameters);
@@ -48,7 +49,7 @@ void app_main(void) {
     lcd_fade_in();
 
     // Initialize USB HID keyboard
-    // usb_host_hid_keyboard_init()
+    // xTaskCreate(&usb_hid_task, "usb_hid_task", 4096, NULL, 5, 0); 
 
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();
@@ -60,28 +61,37 @@ void app_main(void) {
 	}
 
     // Create a task for Wi-Fi - Priority 5 (High)
-    xTaskCreate(&wifi_task, "wifi_task", 4096, NULL, 5, NULL); 
+    xTaskCreate(&wifi_task, "wifi_task", 4096, NULL, 5, 0); 
 
     // Create a task for MQTT - Priority 5 (High)
-    xTaskCreate(&mqtt_task, "mqtt_task", 4096, NULL, 5, NULL);
+    xTaskCreate(&mqtt_task, "mqtt_task", 4096, NULL, 5, 0);
 
     // Create a task for FOTA - Priority 3 (Medium)
-    xTaskCreate(&fota_task, "fota_task", configMINIMAL_STACK_SIZE * 4, NULL, 3, NULL);
+    xTaskCreate(&fota_task, "fota_task", configMINIMAL_STACK_SIZE * 4, NULL, 3, 0);
 
     // Configure the hardware timer
     configure_hardware_timer();
 }
 
 //==============================================================================
-// FreeRTOS Connectivity Tasks
+// FreeRTOS Tasks
 //==============================================================================
 
-void wifi_task(void *pvParameters) {
-    connect_wifi(); // Initialize and connect to Wi-Fi
-
-    vTaskDelete(NULL); // Delete the task if it's done
+void usb_hid_task(void *pvParameters) {
+    ESP_LOGI(TAG, "Connecting USB HID Peripherals...");
+    esp_usb_hid_init(); // Initialize USB HID for keyboard input
+    
+    vTaskDelete(NULL); // Clean up the task when done
 }
 
+void wifi_task(void *pvParameters) {
+    ESP_LOGI(TAG, "Connecting to Wi-Fi...");
+    connect_wifi(); // Initialize and connect to Wi-Fi
+
+    vTaskDelete(NULL);
+}
+
+// Initialize MQTT and start the task
 void mqtt_task(void *pvParameters) {
     while (wifi_connect_status == 0) {    // TODO: Replace with RTOS event group
         vTaskDelay(pdMS_TO_TICKS(1000)); // Check every second for Wi-Fi connection
@@ -90,13 +100,10 @@ void mqtt_task(void *pvParameters) {
     ESP_LOGI(TAG, "Wi-Fi Connected. Starting MQTT...");
     mqtt_app_start();
 
-    vTaskDelete(NULL); // Clean up the task when done
+    vTaskDelete(NULL);
 }
 
-//==============================================================================
-// FreeRTOS Firmware Update Task
-//==============================================================================
-
+// Firmware Update Over The Air
 void fota_task(void *pvParameters) {
     while (wifi_connect_status == 0) {    // TODO: Replace with RTOS event group
         vTaskDelay(pdMS_TO_TICKS(1000)); // Check every second for Wi-Fi connection

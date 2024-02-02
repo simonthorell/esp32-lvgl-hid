@@ -97,9 +97,6 @@ void button_press_down_cb(void *arg, void *usr_data) {
         lv_obj_add_style(ui_EnterEmailField, &style_ta_unfocused, LV_PART_MAIN);
         lv_obj_add_style(ui_EnterPasswordField, &style_ta_unfocused, LV_PART_MAIN);
 
-        // Change the label's text and color on submit
-        original_text_color = lv_obj_get_style_text_color(ui_SubmitLabel, LV_PART_MAIN); // Save the original color
-
         lv_label_set_text(ui_SubmitLabel, "Submitted to Bosse!");
         lv_obj_set_style_text_color(ui_SubmitLabel, lv_color_make(0, 255, 0), LV_PART_MAIN);
 

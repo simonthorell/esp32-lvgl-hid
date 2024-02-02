@@ -21,7 +21,6 @@ With these features, the repository offers a comprehensive suite for developing 
 
 ## Microcontroller
 - ESP32-S3 with 1.9" ST7789 LCD Screen (Example pre-built version: LILYGO T-Display-S3)
-- Hardware Simulator: [Wokwi Project Simulator](https://wokwi.com/projects/380662202976325633)
 
 ## Template Setup
 This template was created using the following steps:

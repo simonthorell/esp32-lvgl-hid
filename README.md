@@ -121,6 +121,12 @@ idf.py -p (YOUR_PORT) flash monitor
 # Press Ctrl+Å to close (Nordic keyboard)
 ```
 
+## Known Issues
+### 1. Crash on Simultaneous Button Presses
+- **Issue Description:** ESP32 may crash occasionally when multiple buttons are pressed simultaneously. Potential causes include inadequate debounce handling in the `espressif/button` library or task-related conflicts.
+- **Impact:** This issue affects applications relying on multi-button interactions.
+- **Status:** Currently under investigation. Future updates or fixes will be documented.
+
 ## Contributing
 Contributions are welcome! 
 If you have improvements or bug fixes, feel free to fork the repository and submit a pull request.

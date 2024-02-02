@@ -25,7 +25,7 @@ With these features, the repository offers a comprehensive suite for developing 
 ## Template Setup
 This template was created using the following steps:
 
-1. **Setup IDF command line**
+### 1. Setup IDF command line
 - This is only tested and working on Apple Silicon macOS using `.zsh` shell.
     ```bash
     # Edit your shell profile
@@ -38,51 +38,51 @@ This template was created using the following steps:
     export PATH="$HOME/esp/esp-idf/tools:$PATH"
     ```
 
-2. **Create a New Project from Template:**
-- Read the following [link](https://components.espressif.com/components/espressif/esp_lvgl_port?language=en).
-- Use a shell to `cd` to the folder were you want to create your project folder.
-    ```bash
-    # Get the idf-tools
-    get_idf
+### 2. Create a New Project from Template:
+  - Read the following [link](https://components.espressif.com/components/espressif/esp_lvgl_port?language=en).
+  - Use a shell to `cd` to the folder were you want to create your project folder.
+      ```bash
+      # Get the idf-tools
+      get_idf
 
-    # Create the project using the template
-    idf.py create-project-from-example "espressif/esp_lvgl_port^1.4.0:touchscreen"
-    idf.py add-dependency "espressif/usb_host_hid^1.0.2"
-    ```
-3. **Setup VSCode Configuration: [optional]**
+      # Create the project using the template
+      idf.py create-project-from-example "espressif/esp_lvgl_port^1.4.0:touchscreen"
+      idf.py add-dependency "espressif/usb_host_hid^1.0.2"
+      ```
+
+### 3. Setup VSCode Configuration: [optional]
 - Create the file `c_cpp_properties.json` in .vscode folder and add necessary configurations.
 
-4. **Version Control:**
-    - Create a new repository on GitHub for your project.
-    - Initialize git in your project folder:
-      ```bash
-      git init
-      git add .
-      git commit -m "Inital commit and build"
-      ```
-    - Create a development branch [Recommended]
-      ```bash
-      git checkout -b dev
-      ```
-    - Once you are ready for next build you make a Pull Request from dev branch on Github and merge it into the main branch.
+### 4. Version Control:
+  - Create a new repository on GitHub for your project.
+  - Initialize git in your project folder:
+    ```bash
+    git init
+    git add .
+    git commit -m "Inital commit and build"
+    ```
+  - Create a development branch [Recommended]
+    ```bash
+    git checkout -b dev
+    ```
+  - Once you are ready for next build you make a Pull Request from dev branch on Github and merge it into the main branch.
 
 ## Build GUI using SquareLine Studio
-- *TODO: needs clarification! /STH 2024-01-31*
-1. **Add Board**
-  - Compress the `main` folder inside the project directory. 
-    - On macOS you can just: **right click -> Compress Folder**
-    - Rename the folder to `t_display_s3.zip`
-  - Locate the `boards` folder and copy the `t_display_s3` folder.
-  - In your applications folder (if using macOS), find your SquareLine Studio installation, right click `Show Package Contents` then find the `boards` folder and create a new folder called `LilyGo`.
-  - Paste the folder from your clipboard into this folder as well as the .zip folder you created.
+### 1. Add Board
+- Compress the `main` folder inside the project directory. 
+  - On macOS you can just: **right click -> Compress Folder**
+  - Rename the folder to `t_display_s3.zip`
+- Locate the `boards` folder and copy the `t_display_s3` folder.
+- In your applications folder (if using macOS), find your SquareLine Studio installation, right click `Show Package Contents` then find the `boards` folder and create a new folder called `LilyGo`.
+- Paste the folder from your clipboard into this folder as well as the .zip folder you created.
 
-2. **Create GUI**
-  - When you open SquarLine Studio you should now se a tab called **LilyGO** under **Create**.
-  - Once the project is opened, click on **Export -> Create Template Project** and first create a folder called `squareline` in the project folder (included in .gitignore), and when prompted for **Export To** choose the `main/ui` folder in the project folder.
+### 2. Create GUI
+- When you open SquarLine Studio you should now se a tab called **LilyGO** under **Create**.
+- Once the project is opened, click on **Export -> Create Template Project** and first create a folder called `squareline` in the project folder (included in .gitignore), and when prompted for **Export To** choose the `main/ui` folder in the project folder.
 
-3. **Export GUI**
-  - Export the `.ui` files by clicking **Export -> Export UI Files**.
-  - Save  
+### 3. Export GUI
+- Export the `.ui` files by clicking **Export -> Export UI Files**.
+- Save  
 
 ## Build Project & Flash to ESP32
 - *TODO: Replace this with .devcontainer and GitHub Actions for auto-build and firmware update release!*

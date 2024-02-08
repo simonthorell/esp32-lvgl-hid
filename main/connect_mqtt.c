@@ -5,6 +5,7 @@
 #include "string.h"
 #include "secret_credentials.h" // Application secrets
 #include "aes_encrypt.h" // Include the AES encryption header file
+#include "cJSON.h" 
 
 static const char *TAG = "MQTT_CLIENT";
 
@@ -106,37 +107,107 @@ void mqtt_publish(const char *topic, const char *data)
 
 // Parse and encrypt the UI fields, then send over MQTT
 void send_credentials_over_mqtt(lv_obj_t* emailField, lv_obj_t* passwordField) {
+    uint8_t key[32] = AES_256_ENCRYPTION_KEY; // Defined in secret_credentials.h
+
+    // Initialize the IV and generate a random IV
+    uint8_t iv[AES_BLOCK_SIZE];
+    generate_random_iv(iv, sizeof(iv));
+
+    // Get text from the UI fields
     const char* email = lv_textarea_get_text(emailField);
     const char* password = lv_textarea_get_text(passwordField);
 
-    // Define the encryption key and initialization vector (IV)
-    uint8_t key[32] = {0x00}; // Replace with your 256-bit encryption key
-    uint8_t iv[16] = {0x00};  // Replace with a random or unique IV
+    // Get the lengths of the email and password
+    size_t email_len = strlen(email);
+    size_t password_len = strlen(password);
 
-    // Define the maximum lengths for the email and password
-    const int maxEmailLength = 35;
-    const int maxPasswordLength = 35;
-    const int maxJsonLength = maxEmailLength + maxPasswordLength + 50; // Extra space for JSON formatting
+    // Calculate the padded lengths
+    size_t padded_email_len = email_len + (AES_BLOCK_SIZE - (email_len % AES_BLOCK_SIZE));
+    size_t padded_password_len = password_len + (AES_BLOCK_SIZE - (password_len % AES_BLOCK_SIZE));
 
-    // Allocate memory for the JSON message and encrypted message on the stack
-    char jsonMessage[maxJsonLength];
-    uint8_t encryptedMessage[maxJsonLength]; // AES-256 CBC output will not exceed the input length
+    // Allocate memory for the padded email and password
+    uint8_t *padded_email = malloc(padded_email_len);
+    uint8_t *padded_password = malloc(padded_password_len);
 
-    // Format the message as JSON
-    snprintf(jsonMessage, sizeof(jsonMessage), "{\"email\":\"%s\", \"password\":\"%s\"}", email, password);
+    // Copy the original data and add PKCS#7 padding
+    memcpy(padded_email, email, email_len);
+    memset(padded_email + email_len, (uint8_t)(padded_email_len - email_len), padded_email_len - email_len);
+    memcpy(padded_password, password, password_len);
+    memset(padded_password + password_len, (uint8_t)(padded_password_len - password_len), padded_password_len - password_len);
 
-    // Encrypt the JSON message using AES-256 CBC
-    int encryptionResult = aes256_cbc_encrypt((const uint8_t*)jsonMessage, key, iv, encryptedMessage);
-
-    if (encryptionResult != 0) {
+    // Encrypt the padded email and password
+    uint8_t encryptedEmail[padded_email_len];
+    uint8_t encryptedPassword[padded_password_len];
+    if (aes256_encrypt_cbc(padded_email, padded_email_len, key, iv, encryptedEmail) != 0 ||
+        aes256_encrypt_cbc(padded_password, padded_password_len, key, iv, encryptedPassword) != 0) {
         ESP_LOGE(TAG, "Encryption failed!");
-        return; // Handle the error accordingly
+        free(padded_email);
+        free(padded_password);
+        return;
     }
 
-    // Publish the encrypted message to the MQTT topic
-    mqtt_publish(MQTT_TOPIC, (const char*)encryptedMessage);
+    // Encode encrypted data to Base64
+    char* base64Email = base64_encode(encryptedEmail, sizeof(encryptedEmail));
+    char* base64Password = base64_encode(encryptedPassword, sizeof(encryptedPassword));
+    if (!base64Email || !base64Password) {
+        ESP_LOGE(TAG, "Base64 encoding failed!");
+        free(base64Email); // Free resources if allocated
+        free(base64Password); // Free resources if allocated
+        return;
+    }
 
-    ESP_LOGI(TAG, "Credentials sent over MQTT (Encrypted): [Encrypted Data]");
+    // Create a JSON object for the MQTT message
+    cJSON* mqttMessage = cJSON_CreateObject();
+    if (!mqttMessage) {
+        ESP_LOGE(TAG, "Failed to create MQTT message!");
+        free(base64Email); // Free resources
+        free(base64Password); // Free resources
+        return;
+    }
+
+    // Add the encrypted and encoded credentials to the JSON object
+    cJSON_AddStringToObject(mqttMessage, "email", base64Email);
+    cJSON_AddStringToObject(mqttMessage, "password", base64Password);
+
+    // Option 1. Convert IV to hexadecimal string for JSON
+    // char ivHex[2 * AES_BLOCK_SIZE + 1]; // Each byte is represented by two hex characters
+    // for (int i = 0; i < AES_BLOCK_SIZE; i++) {
+    //     sprintf(ivHex + (i * 2), "%02x", iv[i]);
+    // }
+    // cJSON_AddStringToObject(mqttMessage, "iv", ivHex);
+
+    // Option 2. Send iv as cleartext string
+    // char ivStr[AES_BLOCK_SIZE + 1]; // +1 for the null terminator
+    // memcpy(ivStr, iv, AES_BLOCK_SIZE);
+    // ivStr[AES_BLOCK_SIZE] = '\0'; // Null-terminate the string
+    // cJSON_AddStringToObject(mqttMessage, "iv", ivStr);
+
+    // Option 3. Send iv as Base64 string
+    char* ivBase64 = base64_encode(iv, AES_BLOCK_SIZE);
+    cJSON_AddStringToObject(mqttMessage, "iv", ivBase64); // Add the Base64 encoded IV to the JSON object
+    // Do not forget to free!
+
+    // Convert the MQTT message to a string
+    char* mqttMessageStr = cJSON_PrintUnformatted(mqttMessage);
+    if (!mqttMessageStr) {
+        ESP_LOGE(TAG, "Failed to print MQTT message!");
+        cJSON_Delete(mqttMessage);
+        free(base64Email); // Free resources
+        free(base64Password); // Free resources
+        return;
+    }
+
+    // Publish the MQTT message
+    mqtt_publish(MQTT_TOPIC, mqttMessageStr);
+
+    // Clean up
+    cJSON_Delete(mqttMessage);
+    free(mqttMessageStr);
+    free(base64Email);
+    free(base64Password);
+    free(ivBase64);
+
+    ESP_LOGI(TAG, "Credentials sent over MQTT (Encrypted)");
 }
 
 // Function to parse the UI-textfields and send the credentials over MQTT (no encryption)

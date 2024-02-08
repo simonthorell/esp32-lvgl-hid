@@ -6,6 +6,8 @@
 #include "gui_textfields.h"
 
 #define MQTT_TOPIC "iot23-st/credentials"
+#define MAX_EMAIL_LENGTH 50
+#define MAX_PASSWORD_LENGTH 50
 
 // Initialize MQTT
 void mqtt_app_start(void);

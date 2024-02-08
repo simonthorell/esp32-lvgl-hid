@@ -13,12 +13,20 @@
 #include "gui_textfields.h"
 
 typedef enum{
-    RELEASE, // Use as false
-    DEVELOP  // Use as true
+    RELEASE,
+    DEVELOP
 } app_mode_t;
 
-/* TODO: Fix the CMake copy-script to ensure the last built firmware .bin-file is copied.
-         to the firmware folder. Also update firmware.json version as set in main.c. */
+/* TODO LIST: 2024-02-02
+    1. Write sh script to update ca_cert on build
+    2. One-time-writeable efuse device ID -
+        https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/efuse.html 
+    3. Code sign firmware.bin during copy process in build & Validate upon download
+    4. Ändra prio på tasks: Core 0 = get input, Save data to que, update ui, Core: 1 = Wifi, Mqtt, read data, send data
+    5. Fix the CMake copy-script to ensure the last built firmware .bin-file is copied.
+         to the firmware folder. Also update firmware.json version as set in main.c. 
+*/
+
 #define APPLICATION_MODE DEVELOP
 #define FIRMWARE_VERSION 0.03 // Firmware version, used for FOTA (Max 2 decimal places)
 #define UPDATE_JSON_URL "https://raw.githubusercontent.com/simonthorell/esp32-lvgl-hid/main/bin/firmware.json"
@@ -46,7 +54,7 @@ void app_main(void) {
     lcd_init(disp_drv, &disp_handle, false); 
 
     // FreeRTOS task using second core (core 0 will be dedicated to wifi, mqtt, bt etc)
-    xTaskCreatePinnedToCore(ui_update_task, "update_ui", 4096 * 2, NULL, 0, NULL, 1);
+    xTaskCreatePinnedToCore(ui_update_task, "update_ui", 4096 * 2, NULL, 3, NULL, 1);
 
     // Setup the GUI components
     setup_buttons();
@@ -68,10 +76,10 @@ void app_main(void) {
 	}
 
     // Create a task for Wi-Fi - Priority 5 (High)
-    xTaskCreate(&wifi_task, "wifi_task", 4096, NULL, 5, 0); 
+    xTaskCreatePinnedToCore(&wifi_task, "wifi_task", 4096, NULL, 5, NULL, 0); 
 
     // Create a task for MQTT - Priority 5 (High)
-    xTaskCreate(&mqtt_task, "mqtt_task", 4096, NULL, 5, 0);
+    xTaskCreatePinnedToCore(&mqtt_task, "mqtt_task", 4096, NULL, 4, NULL, 0);
 
     // Create a queue for HID events
     app_event_queue = xQueueCreate(10, sizeof(app_event_queue_t)); // Adjust size as necessary
@@ -81,10 +89,10 @@ void app_main(void) {
     }
 
     // Create and start the USB HID task
-    xTaskCreate(&usb_hid_task, "usb_hid_task", 4096, NULL, 5, 0);
+    xTaskCreatePinnedToCore(&usb_hid_task, "usb_hid_task", 4096, NULL, 5, NULL, 1);
 
     // Create a task for FOTA - Priority 3 (Medium)
-    xTaskCreate(&fota_task, "fota_task", configMINIMAL_STACK_SIZE * 4, NULL, 3, 0);
+    xTaskCreatePinnedToCore(&fota_task, "fota_task", configMINIMAL_STACK_SIZE * 4, NULL, 1, NULL, 1);
 
     // Configure the hardware timer
     configure_hardware_timer();

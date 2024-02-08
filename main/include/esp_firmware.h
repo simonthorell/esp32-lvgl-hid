@@ -9,7 +9,7 @@
 #include "esp_https_ota.h"      // ESP32 HTTPS OTA (Over-The-Air) library
 #include "cJSON.h"              // cJSON library for JSON parsing
 #include "esp_event.h"
-#include "esp_crt_bundle.h"
+#include "esp_crt_bundle.h"     // ESP32 certificate bundle (mozilla_root_certs)
 
 esp_err_t _http_event_handler(esp_http_client_event_t *evt);
 void firmware_update_check(double FIRMWARE_VERSION, const char* UPDATE_JSON_URL);

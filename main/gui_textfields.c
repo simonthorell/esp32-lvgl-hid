@@ -9,14 +9,14 @@ lv_style_t style_ta_focused;
 lv_style_t style_ta_unfocused;
 
 // Define other global variables related to the textfield
-lv_color_t original_text_color;    // Store the original text color
+lv_color_t original_text_color;
 const char* original_text = "Submit to Bosse pressing both buttons";
 lv_timer_t* revert_timer = NULL;
 
 // Setup style for input fields
 void setup_inputfields() {
-    // Store the original text color (wifi connection mess it up)
-    original_text_color = lv_obj_get_style_text_color(ui_SubmitLabel, LV_PART_MAIN);
+    // Set original status text/label color
+    original_text_color = lv_color_make(200, 200, 200);
 
     lv_textarea_set_password_mode(ui_EnterPasswordField, true);
     lv_textarea_set_max_length(ui_EnterEmailField, 35);

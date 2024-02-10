@@ -17,16 +17,6 @@ typedef enum{
     DEVELOP
 } app_mode_t;
 
-/* TODO LIST: 2024-02-02
-    1. Write sh script to update ca_cert on build
-    2. One-time-writeable efuse device ID -
-        https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/efuse.html 
-    3. Code sign firmware.bin during copy process in build & Validate upon download
-    4. Ändra prio på tasks: Core 0 = get input, Save data to que, update ui, Core: 1 = Wifi, Mqtt, read data, send data
-    5. Fix the CMake copy-script to ensure the last built firmware .bin-file is copied.
-         to the firmware folder. Also update firmware.json version as set in main.c. 
-*/
-
 #define APPLICATION_MODE DEVELOP
 #define FIRMWARE_VERSION 0.03 // Firmware version, used for FOTA (Max 2 decimal places)
 #define UPDATE_JSON_URL "https://raw.githubusercontent.com/simonthorell/esp32-lvgl-hid/main/bin/firmware.json"
@@ -103,25 +93,25 @@ void app_main(void) {
 //==============================================================================
 
 void usb_hid_task(void *pvParameters) {
-    // Initialize the USB Host Library
-    // const usb_host_config_t host_config = {
-    //     .skip_phy_setup = false,
-    //     .intr_flags = ESP_INTR_FLAG_LEVEL1,
-    // };
-    // ESP_ERROR_CHECK(usb_host_install(&host_config));
+    Initialize the USB Host Library
+    const usb_host_config_t host_config = {
+         .skip_phy_setup = false,
+         .intr_flags = ESP_INTR_FLAG_LEVEL1,
+     };
+     ESP_ERROR_CHECK(usb_host_install(&host_config));
 
-    // // HID host driver configuration
-    // const hid_host_driver_config_t hid_host_driver_config = {
-    //     .create_background_task = true,
-    //     .task_priority = 4,
-    //     .stack_size = 4096,
-    //     .core_id = 0,
-    //     .callback = hid_host_device_callback,
-    //     .callback_arg = NULL,
-    // };
+    // HID host driver configuration
+     const hid_host_driver_config_t hid_host_driver_config = {
+         .create_background_task = true,
+         .task_priority = 4,
+         .stack_size = 4096,
+         .core_id = 0,
+         .callback = hid_host_device_callback,
+         .callback_arg = NULL,
+     };
 
-    // // Install HID host driver
-    // ESP_ERROR_CHECK(hid_host_install(&hid_host_driver_config));
+    // Install HID host driver
+    ESP_ERROR_CHECK(hid_host_install(&hid_host_driver_config));
 
     // Variables for storing events
     app_event_queue_t evt_queue;
@@ -176,8 +166,8 @@ void usb_hid_task(void *pvParameters) {
     }
 
     // Cleanup: Uninstall HID host and USB host library
-    // hid_host_uninstall();
-    // usb_host_uninstall();
+    hid_host_uninstall();
+    usb_host_uninstall();
     vQueueDelete(app_event_queue);
 
     // Delete the task itself
